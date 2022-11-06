@@ -4,6 +4,7 @@ import Floor from "./Floor";
 import House from "./House";
 import Graves from "./Graves";
 import Ghosts from "./Ghosts";
+import Snowflakes from "./Snowflakes";
 
 const Scene = () => {
   const fogColor = "#262837";
@@ -39,6 +40,7 @@ const Scene = () => {
       <Graves count={100} />
       <Ghosts />
       <Floor />
+      <Snowflakes count={500} />
     </>
   );
 };
