@@ -1,6 +1,10 @@
 import { useRef, useEffect, FunctionComponent } from "react";
 import { Float32BufferAttribute, Mesh, RepeatWrapping } from "three";
 import { useTexture } from "@react-three/drei";
+import colorTexturePath from "/textures/grass/color.jpg";
+import ambientOcclusionTexturePath from "/textures/grass/ambientOcclusion.jpg";
+import normalTexturePath from "/textures/grass/normal.jpg";
+import roughnessTexturePath from "/textures/grass/roughness.jpg";
 
 const Floor: FunctionComponent = () => {
   const floorRef = useRef<Mesh>(null!);
@@ -9,13 +13,13 @@ const Floor: FunctionComponent = () => {
     grassColorTexture,
     grassAmbientOcclusionTexture,
     grassNormalTexture,
-    grassRoughnessTexture
+    grassRoughnessTexture,
   ] = useTexture([
-    "/textures/grass/color.jpg",
-    "/textures/grass/ambientOcclusion.jpg",
-    "/textures/grass/normal.jpg",
-    "/textures/grass/roughness.jpg",
-  ]).map(texture => {
+    colorTexturePath,
+    ambientOcclusionTexturePath,
+    normalTexturePath,
+    roughnessTexturePath,
+  ]).map((texture) => {
     texture.repeat.set(8, 8);
     texture.wrapS = RepeatWrapping;
     texture.wrapT = RepeatWrapping;

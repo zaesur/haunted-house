@@ -7,6 +7,18 @@ import {
   SphereGeometry,
 } from "three";
 
+import doorColorTexturePath from "/textures/door/color.jpg";
+import doorAlphaTexturePath from "/textures/door/alpha.jpg";
+import doorAmbientOcclusionTexturePath from "/textures/door/ambientOcclusion.jpg";
+import doorHeightTexturePath from "/textures/door/height.jpg";
+import doorNormalTexturePath from "/textures/door/normal.jpg";
+import doorMetalnessTexturePath from "/textures/door/metalness.jpg";
+import doorRoughnessTexturePath from "/textures/door/roughness.jpg"
+import bricksColorTexturePath from "/textures/bricks/color.jpg";
+import bricksAmbientOcclusionTexturePath from "/textures/bricks/ambientOcclusion.jpg"
+import bricksNormalTexturePath from "/textures/bricks/normal.jpg"
+import bricksRoughnessTexturePath from "/textures/bricks/roughness.jpg"
+
 const bushGeometry = new SphereGeometry(1, 16, 16);
 const bushMaterial = new MeshStandardMaterial({ color: "#89c854" });
 
@@ -58,17 +70,17 @@ const House: FunctionComponent<HouseProps> = ({ children }) => {
     bricksNormalTexture,
     bricksRoughnessTexture,
   ] = useTexture([
-    "/textures/door/color.jpg",
-    "/textures/door/alpha.jpg",
-    "/textures/door/ambientOcclusion.jpg",
-    "/textures/door/height.jpg",
-    "/textures/door/normal.jpg",
-    "/textures/door/metalness.jpg",
-    "/textures/door/roughness.jpg",
-    "/textures/bricks/color.jpg",
-    "/textures/bricks/ambientOcclusion.jpg",
-    "/textures/bricks/normal.jpg",
-    "/textures/bricks/roughness.jpg",
+    doorColorTexturePath,
+    doorAlphaTexturePath,
+    doorAmbientOcclusionTexturePath,
+    doorHeightTexturePath,
+    doorNormalTexturePath,
+    doorMetalnessTexturePath,
+    doorRoughnessTexturePath,
+    bricksColorTexturePath,
+    bricksAmbientOcclusionTexturePath,
+    bricksNormalTexturePath,
+    bricksRoughnessTexturePath,
   ]);
 
   const wallsRef = useRef<Mesh>(null!);
