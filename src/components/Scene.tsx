@@ -40,7 +40,7 @@ const Scene = () => {
       <Graves count={100} />
       <Ghosts />
       <Floor />
-      <Snowflakes count={500} />
+      <Snowflakes count={1000} />
     </>
   );
 };
