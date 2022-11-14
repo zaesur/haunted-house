@@ -1,6 +1,6 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import Scene from "./core/components/Scene";
+import Scene from "./components/Scene";
 import "./App.css";
 import { Perf } from "r3f-perf";
 
