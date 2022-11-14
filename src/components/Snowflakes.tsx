@@ -4,9 +4,13 @@ import { FunctionComponent, useMemo, useRef } from "react";
 import {
   BufferAttribute,
   BufferGeometry,
-  InterleavedBufferAttribute,
+  Color,
+  RawShaderMaterial,
 } from "three";
 
+
+import vertexShader from "../shaders/snowflake/snowflake.vert";
+import fragmentShader from "../shaders/snowflake/snowflake.frag";
 import snowflakeTexturePath from "/textures/snowflake.png";
 
 const MIN_X = -15;
@@ -16,19 +20,12 @@ const MAX_Y = 5;
 const MIN_Z = MIN_X;
 const MAX_Z = MAX_X;
 
-const MIN_X_SPEED = -1;
-const MAX_X_SPEED = 1;
-const MIN_Y_SPEED = -0.5;
-const MAX_Y_SPEED = -2;
+const MIN_X_SPEED = -0.5;
+const MAX_X_SPEED = 0.5;
+const MIN_Y_SPEED = -0.25;
+const MAX_Y_SPEED = -1;
 const MIN_Z_SPEED = MIN_X_SPEED;
 const MAX_Z_SPEED = MAX_X_SPEED;
-
-const isBufferAttribute = (
-  attribute: BufferAttribute | InterleavedBufferAttribute
-): attribute is BufferAttribute =>
-  (attribute as BufferAttribute).isBufferAttribute;
-
-const isY = (index: number): boolean => index % 3 === 1;
 
 const generateNumberFromRange = (min: number, max: number): number =>
   Math.random() * (max - min) + min;
@@ -57,28 +54,21 @@ const generateRandomVelocity = (_: any, index: number): number => {
     : NaN;
 };
 
-const createUpdateCoordinate =
-  (position: ArrayLike<number>, velocity: ArrayLike<number>, delta: number) =>
-  (_: any, index: number) => {
-    const offset = index % 3;
-    const coordinate = position[index];
-    const isInRange =
-      (offset === 0 && coordinate > MIN_X && coordinate < MAX_X) ||
-      (offset === 1 && coordinate > MIN_Y && coordinate < MAX_Y) ||
-      (offset === 2 && coordinate > MIN_Z && coordinate < MAX_Z);
-
-    return isInRange
-      ? coordinate + velocity[index] * delta
-      : generateRandomCoordinate(_, index);
-  };
-
 interface SnowflakesProps {
   count: number;
 }
 
 const Snowflakes: FunctionComponent<SnowflakesProps> = ({ count }) => {
   const geometryRef = useRef<BufferGeometry>(null!);
-  const snowflakeTexture = useTexture(snowflakeTexturePath);
+  const materialRef = useRef<RawShaderMaterial>(null!);
+  const texture = useTexture(snowflakeTexturePath);
+
+  const uniforms = useMemo(() => ({
+    uSize: { value: 50.0 },
+    uTime: { value: 1.0 },
+    uColor: { value: new Color("white") },
+    uTexture: { value: texture }
+  }), [texture])
 
   const positions = useMemo(() => {
     const raw = new Array(count * 3).fill(0).map(generateRandomCoordinate);
@@ -92,18 +82,8 @@ const Snowflakes: FunctionComponent<SnowflakesProps> = ({ count }) => {
     return new BufferAttribute(new Float32Array(raw), 3);
   }, [count]);
 
-  useFrame((_, delta) => {
-    const { position, velocity } = geometryRef.current.attributes;
-
-    if (isBufferAttribute(position)) {
-      position.set(
-        new Array(count * 3)
-          .fill(0)
-          .map(createUpdateCoordinate(position.array, velocity.array, delta))
-      );
-    }
-
-    position.needsUpdate = true;
+  useFrame(({ clock }) => {
+    materialRef.current.uniforms.uTime.value = clock.getElapsedTime();
   });
 
   return (
@@ -112,12 +92,13 @@ const Snowflakes: FunctionComponent<SnowflakesProps> = ({ count }) => {
         <bufferAttribute attach="attributes-position" {...positions} />
         <bufferAttribute attach="attributes-velocity" {...velocities} />
       </bufferGeometry>
-      <pointsMaterial
-        sizeAttenuation
+      <shaderMaterial
         transparent
         depthWrite
-        size={0.1}
-        alphaMap={snowflakeTexture}
+        ref={materialRef}
+        fragmentShader={fragmentShader}
+        vertexShader={vertexShader}
+        uniforms={uniforms}
       />
     </points>
   );
